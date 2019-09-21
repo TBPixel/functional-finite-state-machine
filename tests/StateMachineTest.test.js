@@ -1,53 +1,36 @@
-import {
-    newStateMachine,
-    currentState,
-    transitionTo,
-    undo,
-    redo,
-} from '../index';
+import newStateMachine from '../build/index';
+
+const testStates = {
+    foo: ({ states, transitionTo }) => transitionTo(states.bar, 'foo'),
+    bar: ({ states, transitionTo }, payload) => transitionTo(states.baz, `${payload}-bar`),
+    baz: (_, payload) => `${payload}-baz`,
+};
 
 test('can transition between states', () => {
-    const expected = 'end';
-    let fsm = newStateMachine({
-        start: (m, payload) => transitionTo(fsm, m.states.end, payload),
-        end: () => expected,
-    });
+    const fsm = newStateMachine(testStates);
+    fsm.transitionTo(fsm.states.foo);
 
-    fsm = transitionTo(fsm, fsm.states.start, 'start');
-    const actual = currentState(fsm).state;
-
-    expect(actual).toBe(expected);
-    expect(fsm.history.length).toBe(2);
+    const actual = fsm.current().state;
+    expect(actual).toBe('foo-bar-baz');
+    expect(fsm.history().length).toBe(3);
 });
 
 test('can undo transition from state', () => {
-    let fsm = newStateMachine({
-        start: (m, payload) => transitionTo(fsm, m.states.end, payload),
-        end: () => 'end',
-    });
+    const fsm = newStateMachine(testStates);
+    fsm.transitionTo(fsm.states.foo);
+    fsm.undo();
 
-    const expected = 'start';
-    fsm = transitionTo(fsm, fsm.states.start, expected);
-    fsm = undo(fsm);
-    const actual = currentState(fsm).state;
-
-    expect(actual).toBe(expected);
-    expect(fsm.history.length).toBe(2);
+    const actual = fsm.current().state;
+    expect(actual).toBe('foo-bar');
+    expect(fsm.history().length).toBe(4);
 });
 
 test('can redo transition from state', () => {
-    const expected = 'end';
-    let fsm = newStateMachine({
-        start: (m, payload) => transitionTo(fsm, m.states.end, payload),
-        end: () => expected,
-    });
+    const fsm = newStateMachine(testStates);
+    fsm.transitionTo(fsm.states.foo);
+    fsm.redo();
 
-    fsm = transitionTo(fsm, fsm.states.start, 'start');
-    fsm = undo(fsm);
-    fsm = redo(fsm);
-    const actual = currentState(fsm).state;
-
-    expect(actual).toBe(expected);
-    expect(fsm.history.length).toBe(2);
+    const actual = fsm.current().state;
+    expect(actual).toBe('foo-bar-baz');
+    expect(fsm.history().length).toBe(4);
 });
-
