@@ -82,3 +82,25 @@ test('cannot redo infinitely', () => {
     expect(actual).toBe('foo-bar-baz');
     expect(fsm.history().length).toBe(3);
 });
+
+test('cannot transition to unexpected state', () => {
+    const fsm = newStateMachine(testStates);
+
+    expect(() => {
+        fsm.transitionTo({ foo: () => null });
+    }).toThrow('failed to transition to an unknown state!');
+});
+
+test('cannot undo with an empty history', () => {
+    const fsm = newStateMachine(testStates);
+    fsm.undo();
+
+    expect(fsm.history().length).toBe(0);
+});
+
+test('cannot redo with an empty history', () => {
+    const fsm = newStateMachine(testStates);
+    fsm.redo();
+
+    expect(fsm.history().length).toBe(0);
+});
