@@ -16,6 +16,7 @@ const transitionTo = (m, handler, payload) => {
         name,
         payload,
         state: null,
+        index: m.history.length,
         timestamp: new Date(),
     };
     const index = m.history.push(state) - 1;
@@ -33,45 +34,55 @@ const transitionTo = (m, handler, payload) => {
 /**
  * undo one state transition on the state stack.
  *
- * @param {Object} machine The state machine.
+ * @param {Object} m The state machine.
  * @returns {Object} The new state machine.
  */
-const undo = ({ history }) => {
-    if (history.length <= 0) {
-        return { history };
+const undo = (m) => {
+    if (m.history.length <= 0) {
+        return { history: m.history };
     }
 
-    const cursor = history.length - 1;
-    history.push({
-        ...history[cursor - 1],
-        timestamp: new Date(),
-    });
+    const cursor = m.history.length - 1;
+    const state = m.history[cursor];
+    if (state.index <= 0) {
+        return { history: m.history };
+    }
 
-    return {
-        history,
+    const prev = m.history[state.index - 1];
+    const next = {
+        ...prev,
+        timestamp: new Date(),
     };
+    m.history.push(next);
+
+    return { history: m.history };
 };
 
 /**
  * redo moves the state machine ahead one state, if it can, and returns a new state machine.
  *
- * @param {Object} machine The state machine
+ * @param {Object} m The state machine
  * @returns {Object}
  */
-const redo = ({ history }) => {
-    if (history.length <= 0) {
-        return { history };
+const redo = (m) => {
+    if (m.history.length <= 0) {
+        return { history: m.history };
     }
 
-    const cursor = history.length - 1;
-    history.push({
-        ...history[cursor],
-        timestamp: new Date(),
-    });
+    const cursor = m.history.length - 1;
+    const state = m.history[cursor];
+    if (state.index >= cursor) {
+        return { history: m.history };
+    }
 
-    return {
-        history,
+    const prev = m.history[state.index + 1];
+    const next = {
+        ...prev,
+        timestamp: new Date(),
     };
+    m.history.push(next);
+
+    return { history: m.history };
 };
 
 /**
