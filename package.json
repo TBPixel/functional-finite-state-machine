@@ -1,0 +1,50 @@
+{
+  "name": "ffsm",
+  "version": "0.1.0",
+  "description": "A simple, functional finite state machine in JavaScript",
+  "main": "./index.js",
+  "author": "Tony Barry <TonyMPBarry@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/TBPixel/functional-finite-state-machine",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TBPixel/functional-finite-state-machine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TBPixel/functional-finite-state-machine/issues"
+  },
+  "files": [
+    "build",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "finite state machine",
+    "state machine",
+    "fsm",
+    "functional"
+  ],
+  "scripts": {
+    "dev": "webpack --mode=development --watch",
+    "build": "webpack --mode=production",
+    "test": "jest",
+    "test-coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-transform-spread": "^7.2.2",
+    "@babel/preset-env": "^7.6.0",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-loader": "^3.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "jest": "^24.9.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
+  }
+}
