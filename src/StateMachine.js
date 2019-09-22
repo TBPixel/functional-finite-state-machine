@@ -4,7 +4,7 @@
  * @param {Object} m The finite state machine
  * @param {Function} state The state to transition to
  * @param {*} payload An optional payload
- * @returns {Object}
+ * @returns {*}
  */
 const transitionTo = (m, handler, payload) => {
     const name = Object.keys(m.states).find((k) => m.states[k] === handler);
@@ -102,30 +102,68 @@ const newStateMachine = (states) => {
         states,
     };
 
+    /**
+     * current returns the current state in the history.
+     *
+     * @returns {Object}
+     */
     const current = () => m.history[m.history.length - 1];
+
+    /**
+     * history returns a copy of the current state history.
+     *
+     * @returns {Array}
+     */
     const history = () => [...m.history];
 
+    /**
+     * transitionTo transitions the state machine with the given handler.
+     *
+     * @param {Function} handler
+     * @param {*} payload
+     *
+     * @returns {*}
+     */
     const handleTransitionTo = (handler, payload) => {
         const localMachine = {
             ...m,
             transitionTo: handleTransitionTo,
         };
 
-        return transitionTo(localMachine, handler, payload);
+        const result = transitionTo(localMachine, handler, payload);
+        if (!result || (!result.index && result.index < 0)) {
+            return current();
+        }
+
+        return result;
     };
 
+    /**
+     * undo transitions the state machine back one state.
+     *
+     * @returns {void}
+     */
     const handleUndo = () => {
         m = {
             ...m,
             ...undo(m),
         };
+
+        return current();
     };
 
+    /**
+     * redo transitions the state machine forward one state.
+     *
+     * @returns {void}
+     */
     const handleRedo = () => {
         m = {
             ...m,
             ...redo(m),
         };
+
+        return current();
     };
 
     return {

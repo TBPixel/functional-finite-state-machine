@@ -1,16 +1,17 @@
 {
-  "name": "fsm",
+  "name": "ffsm",
   "version": "0.1.0",
-  "description": "A simple finite state machine in JavaScript",
+  "description": "A simple, functional finite state machine in JavaScript",
   "main": "./index.js",
   "author": "Tony Barry <TonyMPBarry@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/TBPixel/functional-finite-state-machine",
   "repository": {
     "type": "git",
-    "url": "git@github.com:TBPixel/finite-state-machine.git"
+    "url": "git+https://github.com/TBPixel/functional-finite-state-machine.git"
   },
   "bugs": {
-    "url": "https://github.com/TBPixel/finite-state-machine/issues"
+    "url": "https://github.com/TBPixel/functional-finite-state-machine/issues"
   },
   "files": [
     "build",
@@ -19,7 +20,8 @@
   "keywords": [
     "finite state machine",
     "state machine",
-    "fsm"
+    "fsm",
+    "functional"
   ],
   "scripts": {
     "dev": "webpack --mode=development --watch",
