@@ -1,8 +1,6 @@
 # Functional Finite State Machine (FFSM)
 
-<!-- [![Latest Version on Packagist](https://img.shields.io/packagist/v/TBPixel/xml-streamer.svg?style=flat-square)](https://packagist.org/packages/tbpixel/type-adapter)
-[![Build Status](https://img.shields.io/travis/TBPixel/xml-streamer/master.svg?style=flat-square)](https://travis-ci.org/TBPixel/type-adapter)
- -->
+[![Build Status](https://img.shields.io/travis/TBPixel/functional-finite-state-machine/master.svg?style=flat-square)](https://travis-ci.org/TBPixel/functional-finite-state-machine)
 
 
 #### Content
