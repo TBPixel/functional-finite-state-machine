@@ -1,3 +1,11 @@
 language: node_js
 node_js:
-  - 10
+- 10
+deploy:
+  provider: npm
+  email: tonympbarry@gmail.com
+  api_key:
+    secure: UCCget23hZiDDagiSGwy5ZIr67kWMW5dX2w6AhguSbB+mm7KElg83xRtDHY0OGXeGTFZa1ww9m4Ov4eqROIhWlWWr2+bS8SRHRW/MmniD3SFPiytyQG5V0+6Gom0cAFV2FHiu7EK0pL8fX1mH/d/rO5dT753jeAwb1St0t8q0fbXKg1S8SknWJym89d3h+9p8xv51oznj9HOT5Lh9SZtkpywUHTAFSfdP8adjYief8cpOCygm4S0ncR2sU+ovE/rojkHVDt0O2KlJR8yDLaIKQhrfvu2wdOxs4PUrj5k+WbHdWbjQOrdGGu0Ja+gIILV+YtoeoCQOleqyLiujBc3iikzwu3n1LFJzqbLh18/GD4DKYpV3pcy2sobgj12rxQZeygLmqrMtoHDdcNUTWBArXw4F2cCbNn8RMtyKqwK452m3yIX7mtTp772sDovrALXmJjwUtYC1SR7+fYLmIuBedzA5N9hwtN+rhNzC88hjVvMVrDy79RRPBRpKQCo8urxdpaFWn1TRPv0jlbfNYbwasZbhqu6pUEYv4EGoFxWCg5r+BtOJ6B5IoUK1dKOZPxxQvXUZkTliY1KBfCum5zY2ScDoFO6OemC7zq8FlroUGuXDvmOE/nR4iGQ9PlLcaKenLyH/cUwQMA6RvFh2tpYsaP3A+1GDf2H/1RaNpbDKSw=
+  on:
+    tags: true
+    repo: TBPixel/functional-finite-state-machine

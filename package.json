@@ -17,6 +17,9 @@
     "build",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "finite state machine",
     "state machine",
