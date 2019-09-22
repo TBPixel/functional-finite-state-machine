@@ -70,10 +70,8 @@ import newStateMachine from 'ffsm';
 
 const fsm = newStateMachine({
     send: ({ states, transitionTo }, uri) => {
-        const request = async () => fetch(uri);
-
         try {
-            const response = await request();
+            const response = await fetch(uri);
         } catch (err) {
             return transitionTo(states.error, err);
         }
