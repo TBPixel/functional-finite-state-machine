@@ -1,8 +1,8 @@
 {
   "name": "ffsm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simple, functional finite state machine in JavaScript",
-  "main": "./build/index.js",
+  "module": "index.js",
   "author": "Tony Barry <TonyMPBarry@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/TBPixel/functional-finite-state-machine",
@@ -27,8 +27,8 @@
     "functional"
   ],
   "scripts": {
-    "dev": "webpack --mode=development --watch",
-    "build": "webpack --mode=production",
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production",
     "test": "jest",
     "test-coverage": "jest --coverage"
   },

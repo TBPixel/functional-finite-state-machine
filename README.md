@@ -10,6 +10,7 @@
   - [Http Request](#http-request)
 - [Rational](#rational)
 - [Limitations](#limitations)
+- [API](#api)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
 - [Support Me](#support-me)
@@ -137,6 +138,94 @@ Due to the design of this FSM, there are some limitations.
 - `states` *must* be synchronous.
 - Each `state` *must* handle it's own transitions.
 - `ffsm` has no concept of a "start" state or an "end" state, and so you must be wary of infinite loops.
+
+
+### API
+
+#### newStateMachine
+
+The default export is the `newStateMachine` function.
+
+```js
+// api.js
+import newStateMachine from 'ffsm';
+
+const fsm = newStateMachine({
+    STATE_NAME: ({ states, transitionTo }, payload) => {/* ... */},
+});
+```
+
+As you can see, states are defined as the keys of the object, and their values are the transition functions called when moving to that state.
+
+
+#### current
+
+`current` allows you to retrieve the state that was last pushed onto the history stack.
+
+```js
+// api.js
+const state = fsm.current();
+```
+
+Note that if the history stack is empty, current will return `undefined`.
+
+
+#### history
+
+`history` returns a copy of the history stack for inspection  purposes.
+
+```js
+// api.js
+const history = fsm.history();
+```
+
+History is displayed in _chronological order_, with the most recent being at the bottom. It's worth noting that all mutations are _push-state_, which means that `transitionTo`, `undo` and `redo` all push a new state onto the history stack, rather than attempting to splice the history array.
+
+
+#### transitionTo
+
+`transitionTo` accepts a state handler reference and an optional payload, then executes the handler function.
+
+```js
+// api.js
+fsm.transitionTo(fms.states.STATE_NAME, {someData: 'foo'});
+```
+
+`transitionTo` will validate that the handler reference passed in is one of the registered states within the state machine. This is what keeps the state machine _finite_.
+
+`transitionTo` will also return the last state pushed onto the state stack after processing. This is possible because the state machine is synchronous, and fully performs it's work before returning.
+
+```js
+// api.js
+const state = fsm.transitionTo(fsm.states.STATE_NAME);
+// do whatever with state ...
+```
+
+`transitionTo` is used both internally to switch between states and externally to declare the initial state. This, to me, feels very simple and clear.
+
+
+#### undo
+
+`undo` steps back one referential state, and **does not execute the handler**.
+
+```js
+// api.js
+fsm.undo();
+```
+
+This can be useful when your next state depends on work done in the previous state. It's worth noting that `undo` will return the most recent state just like `transitionTo`.
+
+
+#### redo
+
+`redo` steps forward one referential state, and **does not execute the handler**.
+
+```js
+// api.js
+fsm.redo();
+```
+
+This can be useful when you've stepped back a few states and now want to once-again step forward. Like above, `rdo` will return the most recent state just like `transitionTo`.
 
 
 ## Contributing

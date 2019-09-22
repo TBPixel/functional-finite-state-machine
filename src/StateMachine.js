@@ -1,10 +1,42 @@
 /**
+ * @typedef {Object} StateSnapshot
+ * @property {String} name
+ * @property {Number} index
+ * @property {Date} timestamp
+ * @property {*} payload
+ * @property {*} state
+ */
+
+/**
+ * Handles the state transition and returns the result
+ *
+ * @function HandlerFunc
+ * @param {{states: Object.<String, HandlerFunc>, transitionTo: function(HandlerFunc, *)}} machine
+ * @param {*} [payload]
+ */
+
+/**
+ * @typedef {Object} InternalStateMachine
+ * @property {Object.<String, HandlerFunc>} states
+ * @property {StateSnapshot[]} history
+ */
+
+/**
+ * @typedef {Object} StateMachine
+ * @property {Object.<String, HandlerFunc>} states A reference to the passed in object of states
+ * @property {function():StateSnapshot} current Returns the last active state
+ * @property {function():StateSnapshot[]} history Returns a copy of the state history array
+ * @property {function(HandlerFunc, *)} transitionTo Transitioning the state machine to a given state, calling the handler
+ * @property {function():StateSnapshot} undo Reverts to the previous state, and doesn't call the handler
+ * @property {function():StateSnapshot} redo Re-does the next state, if exists
+ */
+
+/**
  * transitionTo transitions to another internal state
  *
- * @param {Object} m The finite state machine
- * @param {Function} state The state to transition to
- * @param {*} payload An optional payload
- * @returns {*}
+ * @param {InternalStateMachine} m The finite state machine
+ * @param {HandlerFunc} handler The state to transition to
+ * @param {*} [payload] An optional payload
  */
 const transitionTo = (m, handler, payload) => {
     const name = Object.keys(m.states).find((k) => m.states[k] === handler);
@@ -34,18 +66,18 @@ const transitionTo = (m, handler, payload) => {
 /**
  * undo one state transition on the state stack.
  *
- * @param {Object} m The state machine.
- * @returns {Object} The new state machine.
+ * @param {InternalStateMachine} m The state machine.
+ * @return {StateSnapshot[]} The new state machine.
  */
 const undo = (m) => {
     if (m.history.length <= 0) {
-        return { history: m.history };
+        return m.history;
     }
 
     const cursor = m.history.length - 1;
     const state = m.history[cursor];
     if (state.index <= 0) {
-        return { history: m.history };
+        return m.history;
     }
 
     const prev = m.history[state.index - 1];
@@ -55,24 +87,24 @@ const undo = (m) => {
     };
     m.history.push(next);
 
-    return { history: m.history };
+    return m.history;
 };
 
 /**
  * redo moves the state machine ahead one state, if it can, and returns a new state machine.
  *
- * @param {Object} m The state machine
- * @returns {Object}
+ * @param {InternalStateMachine} m The state machine
+ * @return {StateSnapshot[]}
  */
 const redo = (m) => {
     if (m.history.length <= 0) {
-        return { history: m.history };
+        return m.history;
     }
 
     const cursor = m.history.length - 1;
     const state = m.history[cursor];
     if (state.index >= cursor) {
-        return { history: m.history };
+        return m.history;
     }
 
     const prev = m.history[state.index + 1];
@@ -82,14 +114,14 @@ const redo = (m) => {
     };
     m.history.push(next);
 
-    return { history: m.history };
+    return m.history;
 };
 
 /**
  * newStateMachine creates and returns a finite state machine.
  *
  * @param   {Object} states
- * @returns {Object} The state machine
+ * @return {StateMachine} The state machine
  */
 const newStateMachine = (states) => {
     const initial = {
@@ -102,28 +134,9 @@ const newStateMachine = (states) => {
         states,
     };
 
-    /**
-     * current returns the current state in the history.
-     *
-     * @returns {Object}
-     */
     const current = () => m.history[m.history.length - 1];
-
-    /**
-     * history returns a copy of the current state history.
-     *
-     * @returns {Array}
-     */
     const history = () => [...m.history];
 
-    /**
-     * transitionTo transitions the state machine with the given handler.
-     *
-     * @param {Function} handler
-     * @param {*} payload
-     *
-     * @returns {*}
-     */
     const handleTransitionTo = (handler, payload) => {
         const localMachine = {
             ...m,
@@ -138,29 +151,19 @@ const newStateMachine = (states) => {
         return result;
     };
 
-    /**
-     * undo transitions the state machine back one state.
-     *
-     * @returns {void}
-     */
     const handleUndo = () => {
         m = {
             ...m,
-            ...undo(m),
+            history: undo(m),
         };
 
         return current();
     };
 
-    /**
-     * redo transitions the state machine forward one state.
-     *
-     * @returns {void}
-     */
     const handleRedo = () => {
         m = {
             ...m,
-            ...redo(m),
+            history: redo(m),
         };
 
         return current();

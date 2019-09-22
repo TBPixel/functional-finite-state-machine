@@ -4,7 +4,8 @@ module.exports = {
     entry: './index.js',
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: 'index.js',
+        filename: 'ffsm.js',
+        library: 'ffsm',
         libraryTarget: 'commonjs2',
     },
     module: {
