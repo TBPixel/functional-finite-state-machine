@@ -14,7 +14,9 @@
     "url": "https://github.com/TBPixel/functional-finite-state-machine/issues"
   },
   "files": [
+    "src",
     "build",
+    "index.js",
     "README.md"
   ],
   "publishConfig": {
