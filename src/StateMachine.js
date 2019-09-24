@@ -179,4 +179,19 @@ const newStateMachine = (states) => {
     };
 };
 
+/**
+ * factory returns an already executed state machine for inspection.
+ *
+ * @param {Object} states
+ * @param {HandlerFunc} initialState
+ * @param {*} payload
+ * @returns {{fsm: StateMachine, result: StateSnapshot}}
+ */
+export const factory = (states, initialState, payload) => {
+    const fsm = newStateMachine(states);
+    const result = fsm.transitionTo(initialState, payload);
+
+    return { fsm, result };
+};
+
 export default newStateMachine;
