@@ -2,6 +2,11 @@
 
 All notable changes to `tbpixel/functional-finite-state-machine` (`ffsm`) will be documented in this file.
 
+## 0.1.4 - September 22nd, 2019
+
+- Implement a Factory API for throwaway state machines
+- Resolves [Issue #5](https://github.com/TBPixel/functional-finite-state-machine/issues/5)
+
 ## 0.1.3 - September 22nd, 2019
 
 - Fix missing files for npm publish

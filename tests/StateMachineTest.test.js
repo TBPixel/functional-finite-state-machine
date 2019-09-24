@@ -1,4 +1,4 @@
-import newStateMachine from '../index';
+import newStateMachine, { factoryStateMachine } from '../index';
 
 const testStates = {
     foo: ({ states, transitionTo }) => transitionTo(states.bar, 'foo'),
@@ -96,4 +96,11 @@ test('cannot redo with an empty history', () => {
     fsm.redo();
 
     expect(fsm.history().length).toBe(0);
+});
+
+test('can create factory state machine', () => {
+    const { fsm, result } = factoryStateMachine(testStates, testStates.foo);
+
+    expect(result.state).toBe('foo-bar-baz');
+    expect(fsm.history().length).toBe(3);
 });

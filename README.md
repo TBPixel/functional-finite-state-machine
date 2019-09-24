@@ -228,6 +228,72 @@ fsm.redo();
 This can be useful when you've stepped back a few states and now want to once-again step forward. Like above, `rdo` will return the most recent state just like `transitionTo`.
 
 
+#### factoryStateMachine
+
+`factoryStateMachine` allows us to create single-use state machines more easily.
+
+```js
+// example.js
+import { factoryStateMachine } from 'ffsm';
+
+const states = {
+    send: ({ states, transitionTo }, { method, url, data, headers }) => {
+        const send = async () => {
+            const h = {
+                'content-type': 'application/json',
+            };
+
+            return await fetch(url, {
+                method: method,
+                body: data,
+                headers: {
+                    ...h,
+                    headers,
+                },
+            });
+        };
+
+        const res = send();
+        if (res.status >= 400) {
+            return transitionTo(states.error, {
+                request: { method, url, data, headers },
+                response: res,
+            });
+        }
+
+        return transitionTo(states.success, res);
+    },
+    error: (_, { request, response }) => {
+        console.error(`${response.status} error when sending HTTP request ${request.method}: ${request.url}`, request.data);
+        console.error('received response body: ', JSON.parse(response.data.body));
+    },
+    success: (_, res) => {
+        return JSON.parse(res.data.body);
+    },
+};
+
+
+export const requestFSM = (method, url, data, headers) => (
+    factoryStateMachine(states, states.send, { method, url, data, headers })
+);
+
+// use it later..
+import { requestFSM } from 'example';
+
+const { fsm, result } = requestFSM('POST', '/my-hello-world-api', { name: 'Tony' });
+// fsm is the state machine.
+// result is the state that returned after the state machine executed
+// in this case, we could access result.state and have the already
+// parsed JSON payload to work with.
+```
+
+There's a lot of interesting things to unpack:
+
+- `factoryStateMachine` accepts in the states object, an initialState and an optional payload.
+- `factoryStateMachine` always runs the state machine from the provided initial state immediately after execution.
+- `factoryStateMachine` returns an object with the state machine under the fsm property and the last ran state under the result property
+
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
