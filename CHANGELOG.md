@@ -2,6 +2,11 @@
 
 All notable changes to `tbpixel/functional-finite-state-machine` (`ffsm`) will be documented in this file.
 
+## 0.1.5 - September 30th, 2019
+
+- Implement a Fire and Forget API for single-use state machines.
+- Resolves [Issue #7](https://github.com/TBPixel/functional-finite-state-machine/issues/7)
+
 ## 0.1.4 - September 22nd, 2019
 
 - Implement a Factory API for throwaway state machines

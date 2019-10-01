@@ -294,6 +294,27 @@ There's a lot of interesting things to unpack:
 - `factoryStateMachine` returns an object with the state machine under the fsm property and the last ran state under the result property
 
 
+#### fireStateMachine
+
+Much like the `factory API`, the ability to easily create and throw away Finite State Machines will encourage effective use of them. Where factories allowed for easier creation of re-usable state machines, "_Fire and Forget_" intends to encourage easier single-use state machines.
+
+```js
+import { fireStateMachine } from 'ffsm';
+
+const result = fireStateMachine({
+    start: ({ states, transitionTo }, payload) => transitionTo(states.middle, `start-${payload}-`),
+    middle: ({ states, transitionTo }, payload) => transitionTo(states.end, `middle-${payload}-`),
+    end: (_, payload) => `end-${payload}`,
+}, 'foo');
+
+console.log(result.state); // "start-foo-middle-food-end-foo"
+```
+
+There's a two important characteristics here. First and foremost, the initial state is simply the first one that is defined. This is to encourage `fireStateMachine` to be a fire-and-forget API. If you want to re-use the state machine, you should instead use `factoryStateMachine`.
+
+Second, the state machine does not return the machine itself, it only returns the last executed state.  You *cannot* inspect the state machine for details about it's state history; it's all thrown away instead.
+
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
