@@ -1,6 +1,6 @@
 {
   "name": "ffsm",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A simple, functional finite state machine in JavaScript",
   "module": "index.js",
   "author": "Tony Barry <TonyMPBarry@gmail.com>",

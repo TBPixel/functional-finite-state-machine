@@ -1,4 +1,4 @@
-import newStateMachine, { factoryStateMachine } from '../index';
+import newStateMachine, { factoryStateMachine, fireStateMachine } from '../index';
 
 const testStates = {
     foo: ({ states, transitionTo }) => transitionTo(states.bar, 'foo'),
@@ -103,4 +103,21 @@ test('can create factory state machine', () => {
 
     expect(result.state).toBe('foo-bar-baz');
     expect(fsm.history().length).toBe(3);
+});
+
+test('can call single-use state machine', () => {
+    const result = fireStateMachine({
+        start: ({ states, transitionTo }, payload) => transitionTo(states.prependFoo, payload),
+        prependFoo: ({ states, transitionTo }, payload) => transitionTo(states.appendBar, `foo-${payload}`),
+        appendBar: ({ states, transitionTo }, payload) => transitionTo(states.end, `${payload}-bar`),
+        end: (_, payload) => payload,
+    }, 'baz');
+
+    expect(result.state).toBe('foo-baz-bar');
+});
+
+test('cannot create state machine without states', () => {
+    expect(() => {
+        newStateMachine({});
+    }).toThrow('Cannot create a state machine without states');
 });

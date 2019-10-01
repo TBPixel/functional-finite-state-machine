@@ -124,6 +124,10 @@ const redo = (m) => {
  * @return {StateMachine} The state machine
  */
 const newStateMachine = (states) => {
+    if (!Object.keys(states).length) {
+        throw new Error('Cannot create a state machine without states');
+    }
+
     const initial = {
         history: [],
         states: {},
@@ -137,18 +141,24 @@ const newStateMachine = (states) => {
     const current = () => m.history[m.history.length - 1];
     const history = () => [...m.history];
 
-    const handleTransitionTo = (handler, payload) => {
+    const internalTransitionTo = (handler, payload) => {
         const localMachine = {
             ...m,
-            transitionTo: handleTransitionTo,
+            transitionTo: internalTransitionTo,
         };
 
-        const result = transitionTo(localMachine, handler, payload);
-        if (!result || (!result.index && result.index < 0)) {
-            return current();
-        }
+        return transitionTo(localMachine, handler, payload);
+    };
 
-        return result;
+    const externalTransitionTo = (handler, payload) => {
+        const localMachine = {
+            ...m,
+            transitionTo: internalTransitionTo,
+        };
+
+        transitionTo(localMachine, handler, payload);
+
+        return current();
     };
 
     const handleUndo = () => {
@@ -173,7 +183,7 @@ const newStateMachine = (states) => {
         states,
         current,
         history,
-        transitionTo: handleTransitionTo,
+        transitionTo: externalTransitionTo,
         undo: handleUndo,
         redo: handleRedo,
     };
@@ -192,6 +202,22 @@ export const factory = (states, initialState, payload) => {
     const result = fsm.transitionTo(initialState, payload);
 
     return { fsm, result };
+};
+
+/**
+ * fire executes a state machine and returns the resulting state.
+ *
+ * @param {Object} states
+ * @param {HandlerFunc} initialState
+ * @param {*} payload
+ * @returns {StateSnapshot}
+ */
+export const fire = (states, payload) => {
+    const fsm = newStateMachine(states);
+    const keys = Object.keys(states);
+    const initial = states[keys[0]];
+
+    return fsm.transitionTo(initial, payload);
 };
 
 export default newStateMachine;
